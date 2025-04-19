@@ -11,7 +11,7 @@ import crack_estimate.change_unit_format as cuf
 
 def est(image_folder_for_calculate, output_folder):
     ## 用来产生熵权的二值化图片训练集路径
-    image_folder_for_weights_path = 'D:\PyCharm\projects\CrackForest\crack_estimate\\12K'
+    image_folder_for_weights_path = 'crack_estimate\\12K'
     ## 保存产生权重的指标的csv路径
     metric_for_weight_csv = 'configs\metrics_for_weights.csv'
     ## 要计算综合得分的二值化裂缝图片路径，一般来说这个和前面的产生权重的数据集不一样
