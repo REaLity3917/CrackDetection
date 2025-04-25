@@ -80,6 +80,6 @@ def est(image_folder_for_calculate, output_folder):
             for col in zip(*final_scores):  
                 writer.writerow(col)
             for col in zip(*results_transposed):  
-                writer.writerow(col) 
+                writer.writerow([f"{metric:.1f}" for metric in col])
         cuf.change_format_csv(output_csv,cuf.processing_rules)
         print('Result has been created!')

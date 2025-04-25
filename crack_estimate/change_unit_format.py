@@ -22,7 +22,7 @@ def add_cm_0dot1(row, para=0.1):
     return [f"{para*float(value)}cm" for value in row] 
 
 def add_cm2(row):   
-    return [f"{value}cm^2" for value in row] 
+    return [f"{value}cm²" for value in row]
 
 def add_cm3_0dot1(row, para=0.1):  
     return [f"{para*float(value)}cm^3" for value in row] 
@@ -39,8 +39,8 @@ processing_rules = {
     9: add_cm_0dot1,
     10: add_cm_0dot1,
     11: add_cm_0dot1,
-    2: add_cm_0dot1,
-    2: add_cm_0dot1,
+    12: add_cm_0dot1,
+    13: add_cm_0dot1,
     14: add_cm3_0dot1,
     15: convert_to_percent,
     16: convert_to_percent,

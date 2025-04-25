@@ -188,9 +188,9 @@ class WinGUI(tk.Tk):
         return label
 
     def __tk_label_m2dcq27y(self, parent, text="———", fg="white"):
-        font = tkFont.Font(family="microsoft yahei", size=25, weight="bold")  # 设置字体大小为30，加粗
-        label = tk.Label(parent, font=font, bg="#081c31", fg=fg, anchor="center")  # 设置文本居中
-        label.place(x=1130, y=469, width=70, height=48)
+        font = tkFont.Font(family="microsoft yahei", size=18, weight="bold")  # 设置字体大小为30，加粗
+        label = tk.Label(parent, font=font, bg="#081c31", fg=fg)  # 设置文本居中
+        label.place(x=1157, y=475, width=50, height=48)
         label.config(text= text)  # 在标签中显示数字100
         return label
 
@@ -198,7 +198,7 @@ class WinGUI(tk.Tk):
         font = tkFont.Font(family="microsoft yahei", size=15)  # 设置字体大小为18，加粗
         lb = tk.Listbox(parent, font=font, bg="#041022", selectbackground="#041022", fg="white",
                         highlightbackground="#041022", bd=0, selectmode=tk.BROWSE)  # 设置背景颜色、选中后的背景颜色、字体颜色和边框颜色
-        lb.place(x=1030, y=142, width=160, height=300)
+        lb.place(x=1028, y=145, width=168, height=285)
         return lb
 
     def update_image(self, event=None):
@@ -275,17 +275,20 @@ class WinGUI(tk.Tk):
             self.__tk_label_m2dcq27y(self, text=round(float(score),1), fg="red")
         else:
             first_column = ["———" for _ in range(20)]
-        name = ["裂纹长度：", "裂纹面积：", "最大裂纹宽度：", "平均裂纹宽度：", "裂纹密度：", "标称平均宽度：", "分形维度：",
-                "裂纹间距：", "最大裂纹高度：", "平均裂纹高度：", "平均裂纹形状系数：", "平均裂纹取向：", "裂纹体积：",
-                "裂纹扩展速率：", "裂纹宽度变化率：", "裂纹分布均匀性：",
-                "裂纹分布方向性：","裂缝分布集中度：", "裂缝分布离散度：", "可微调基础指标："]
-        # "裂纹长度：",
+        # name = ["裂纹长度：", "裂纹面积：", "最大裂纹宽度：", "平均裂纹宽度：", "裂纹密度：", "标称平均宽度：", "分形维度：",
+        #         "裂纹间距：", "最大裂纹高度：", "平均裂纹高度：", "平均裂纹形状系数：", "平均裂纹取向：", "裂纹体积：",
+        #         "裂纹扩展速率：", "裂纹宽度变化率：", "裂纹分布均匀性：",
+        #         "裂纹分布方向性：","裂缝分布集中度：", "裂缝分布离散度：", "可微调基础指标："]
+        name = ["裂纹长度:", "裂纹面积:", "最大宽度:", "平均宽度:", "裂纹密度:", "平均宽度:", "分形维度:",
+                "裂纹间距:", "最大高度:", "平均高度:"]
+        # "裂纹长度:",
 
         # 将第一列数据添加到列表框中
         self.tk_list_box_m2ddc36o.delete(0, tk.END)
         for index, item in enumerate(first_column):
-            value_with_prefix = f"{name[index]}{item}"
-            self.tk_list_box_m2ddc36o.insert(tk.END, value_with_prefix)
+            if index < 10:
+                value_with_prefix = f"{name[index]}{item}"
+                self.tk_list_box_m2ddc36o.insert(tk.END, value_with_prefix)
 
     def show_large_image(self, event=None):
         if self.current_image:

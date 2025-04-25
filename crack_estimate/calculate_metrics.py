@@ -11,7 +11,7 @@ def calculate_crack_metrics(binary_image):
     crack_length = np.sum(skeleton)
     
     # 计算裂缝面积
-    crack_area = np.sum(binary_image)
+    crack_area = np.sum(binary_image)/1000
     
     # 计算裂缝宽度
     labeled_image, num_features = label(binary_image)

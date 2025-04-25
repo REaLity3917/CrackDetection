@@ -19,7 +19,6 @@ def create_metrics_for_weights(image_folder_for_weights_path, metric_for_weight_
         binary_image = binary_image / 255
         if np.all(binary_image == 0):
             continue
-  
         # 处理图片并获取指标列表  
         metrics = calculate_crack_metrics(binary_image)###
           
