@@ -14,17 +14,21 @@ class WinGUI(tk.Tk):
     def __init__(self):
         super().__init__()
         self.__win()
+
+        # 读取配置文件
+        self.config_file = "configs\config.json"
+        self.load_config()
+
         self.tk_list_box_m2dbzpwc = self.__tk_list_box_m2dbzpwc(self)
         self.tk_label_image = self.__tk_label_image(self)
         self.tk_label_newimage = self.__tk_label_new_image(self)
         self.tk_label_m2dcq27y = self.__tk_label_m2dcq27y(self)
         self.tk_list_box_m2ddc36o = self.__tk_list_box_m2ddc36o(self)
-        self.show_rectangle()  # 在这里调用 show_rectangle 方法
         self.current_path = ''
         self.current_image = ''
-        # 读取配置文件
-        self.config_file = "configs\config.json"
-        self.load_config()
+
+        self.update_images()
+        self.calculate_value(self.current_image)
 
     def load_config(self):
         if os.path.exists(self.config_file):
@@ -39,8 +43,6 @@ class WinGUI(tk.Tk):
                     self.current_image = config["current_image"]
                 else:
                     self.tk_label_output.config(text=f"未选择输出位置")
-                self.update_images()
-                self.calculate_value(self.current_image)
 
     def save_config(self):
         config = {"last_folder": self.image_folder, "output_folder": self.output_folder,
@@ -162,8 +164,6 @@ class WinGUI(tk.Tk):
             else:
                 self.tk_list_box_m2dbzpwc.selection_set(0)
             self.update_image()
-        # else:
-        #     self.show_rectangle()
 
 
     def __tk_list_box_m2dbzpwc(self, parent):
@@ -178,13 +178,13 @@ class WinGUI(tk.Tk):
     def __tk_label_image(self, parent):
         label = tk.Label(parent, image=self.bg_photo1)
         label.place(x=325, y=175, width=273, height=290)  # 修改位置和大小
-        label.bind("<Button-1>", self.show_large_image)  # 绑定左键单击事件到show_large_image方法
+        label.bind("<Button-1>", lambda event,folder=self.image_folder: self.show_large_image(folder,event))
         return label
 
     def __tk_label_new_image(self, parent):
         label = tk.Label(parent, image=self.bg_photo1)
         label.place(x=670, y=175, width=273, height=290)  # 修改位置和大小
-        label.bind("<Button-1>", self.show_large_newimage)  # 绑定左键单击事件到show_large_image方法
+        label.bind("<Button-1>", lambda event,folder=self.output_folder: self.show_large_image(folder,event))
         return label
 
     def __tk_label_m2dcq27y(self, parent, text="———", fg="white"):
@@ -272,7 +272,14 @@ class WinGUI(tk.Tk):
             # print(first_column[1:])
             # 保留每个数值的2位小数
             # first_column = [round(x, 2) for x in first_column]
-            self.__tk_label_m2dcq27y(self, text=round(float(score),1), fg="red")
+            score_=round((float(score)-70)/1.5,1)
+            if score_<4:
+                fg="red"
+            elif score_<8:
+                fg="yellow"
+            else:
+                fg="green"
+            self.__tk_label_m2dcq27y(self, text=score_, fg=fg)
         else:
             first_column = ["———" for _ in range(20)]
         # name = ["裂纹长度：", "裂纹面积：", "最大裂纹宽度：", "平均裂纹宽度：", "裂纹密度：", "标称平均宽度：", "分形维度：",
@@ -290,65 +297,24 @@ class WinGUI(tk.Tk):
                 value_with_prefix = f"{name[index]}{item}"
                 self.tk_list_box_m2ddc36o.insert(tk.END, value_with_prefix)
 
-    def show_large_image(self, event=None):
+    def show_large_image(self, folder, event=None):
         if self.current_image:
-            image_path = os.path.join(self.image_folder, self.current_image)
+            image_path = os.path.join(folder, self.current_image)
             if os.path.isfile(image_path):
                 large_image = Image.open(image_path).resize((600, 600), Image.Resampling.LANCZOS)
                 large_photo = ImageTk.PhotoImage(large_image)
 
-                # 创建一个新窗口
-                large_image_window = tk.Toplevel(self)
-                # large_image_window.overrideredirect(True)  # 隐藏标题栏
-                large_image_window.title("Detailed Image")  # 标题栏隐藏后，标题不会显示
-
-                # 计算窗口居中的位置
-                screen_width = self.winfo_screenwidth()
-                screen_height = self.winfo_screenheight()
-                x = (screen_width - 600) // 2
-                y = (screen_height - 600) // 2
-                large_image_window.geometry(f"600x600+{x}+{y}")  # 设置窗口大小和位置
+                # 如果已经存在大图标签，先移除
+                if hasattr(self, 'large_image_label') and self.large_image_label:
+                    self.large_image_label.destroy()
 
                 # 创建一个标签来显示大图
-                large_image_label = tk.Label(large_image_window, image=large_photo)
-                large_image_label.image = large_photo  # 保持对PhotoImage的引用
-                large_image_label.pack(fill="both", expand=True)
+                self.large_image_label = tk.Label(self, image=large_photo)
+                self.large_image_label.image = large_photo  # 保持对PhotoImage的引用
+                self.large_image_label.place(relx=0.5, rely=0.5, anchor="center")  # 将标签放置在页面中央
 
-                # 绑定点击事件，点击时关闭窗口
-                large_image_label.bind("<Button-1>", lambda e: large_image_window.destroy())
-
-    def show_large_newimage(self, event=None):
-        if self.current_image:
-            image_path = os.path.join(self.output_folder, self.current_image)
-            if os.path.isfile(image_path):
-                large_image = Image.open(image_path).resize((600, 600), Image.Resampling.LANCZOS)
-                large_photo = ImageTk.PhotoImage(large_image)
-
-                # 创建一个新窗口
-                large_image_window = tk.Toplevel(self)
-                # large_image_window.overrideredirect(True)  # 隐藏标题栏
-                large_image_window.title("Detailed Image")  # 标题栏隐藏后，标题不会显示
-
-                # 计算窗口居中的位置
-                screen_width = self.winfo_screenwidth()
-                screen_height = self.winfo_screenheight()
-                x = (screen_width - 600) // 2
-                y = (screen_height - 600) // 2
-                large_image_window.geometry(f"600x600+{x}+{y}")  # 设置窗口大小和位置
-
-                # 创建一个标签来显示大图
-                large_image_label = tk.Label(large_image_window, image=large_photo)
-                large_image_label.image = large_photo  # 保持对PhotoImage的引用
-                large_image_label.pack(fill="both", expand=True)
-
-                # 绑定点击事件，点击时关闭窗口
-                large_image_label.bind("<Button-1>", lambda e: large_image_window.destroy())
-
-    def show_rectangle(self):
-        white_image = Image.new('RGB', (273, 290), color='#041022')
-        photo = ImageTk.PhotoImage(white_image)
-        self.tk_label_image.config(image=photo)
-        self.tk_label_image.image = photo
+                # 绑定点击事件，点击时移除标签
+                self.large_image_label.bind("<Button-1>", lambda e: self.large_image_label.destroy())
 
 if __name__ == "__main__":
     win = WinGUI()
