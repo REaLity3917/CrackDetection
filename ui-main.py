@@ -14,7 +14,8 @@ class WinGUI(tk.Tk):
     def __init__(self):
         super().__init__()
         self.__win()
-
+        self.image_folder='train'
+        self.output_folder='train'
         # 读取配置文件
         self.config_file = "configs\config.json"
         self.load_config()
@@ -49,6 +50,8 @@ class WinGUI(tk.Tk):
             "current_image": self.current_image}
         with open(self.config_file, "w") as f:
             json.dump(config, f)
+        self.tk_label_image = self.__tk_label_image(self)
+        self.tk_label_newimage = self.__tk_label_new_image(self)
 
     def __win(self):
         self.title("山东大学裂缝检测与健康评估系统")
@@ -126,8 +129,8 @@ class WinGUI(tk.Tk):
     def select_folder(self):
         self.image_folder = filedialog.askdirectory(title="选择数据集")
         self.output_folder = ''
-        self.update_images()
         self.save_config()  # 保存配置文件
+        self.update_images()
 
     def crack_detect(self,current_file=None):
         # self.output_folder = filedialog.askdirectory(title="选择输出文件夹")
