@@ -1,45 +1,74 @@
-# 使用方法by JaspinXu
+# 山东大学裂缝检测与健康评估系统
 
-这个只能用来作为可以计算分数的demo，算法就是指标+熵权法+模糊综合评价，非常非常基础没有一点技术含量，只能起应付中期验收的作用，实际用还得改，只能说是程序能跑的程度......
+![界面截图](screenshot.png) <!-- 替换为你的界面截图路径 -->
 
-## dataset
+本项目是一个基于深度学习的裂缝检测与结构健康评估系统，结合图形界面实现以下功能：
+- 裂缝图像批量导入与管理
+- 基于UNet的裂缝特征提取
+- 多维度的裂缝量化分析
+- 结构健康智能评估
 
-数据集存放在groundTruthPngImg目录下，用来产生权重
+## 功能特性
 
-## calculate_metrics.py
+✅ 可视化操作界面  
+✅ 支持批量图像处理  
+✅ 提供21项裂缝量化指标  
+✅ 智能健康评分系统  
+✅ 结果对比可视化  
+✅ 支持Windows/Linux平台
 
-这个文件用来计算各种指标，但是有的指标稍微有点重复，指标越多越好，其中最后的index_basic_metric是预先设定权重的，主观性很大，需要根据情况修改
+## 快速开始
 
-## metric2csv.py
+### 环境要求
+- Python 3.8+
+- CUDA 11.3+ (推荐GPU运行)
+- PyTorch 1.12+
 
-运行这个文件会计算数据集中所有图像的所有指标，然后存到metrics_samples.csv文件里，其中一列代表一个图像的22个指标，一行代表83张数据集图像的同一指标计算值
+### 安装步骤
+1. 克隆仓库
+```bash
+git clone https://github.com/yourusername/crack-detection-system.git
+cd crack-detection-system
+```
 
-## crack_entropy_fuzzy.py
-
-运行这个文件会由csv文件计算一些权重，对于新的图像，比如crack_binary_image.png，计算它的所有指标值，然后计算隶属度矩阵(这个地方偏主观，等级向量level_vectors各个临界值的确定需要依据指标对损伤程度的主观判断)，再利用上面的权重计算出综合得分，分数越低损伤程度越大
-
-## 路径修改
-
-metric2csv.py的image_folder = 'G:\\crack_estimate\\crack_estimate\\groundTruthPngImg' 用的时候改成自己的路径
-
-## pipeline
-
-可以修改groundTruthPngImg目录下的数据集，运行metric2csv.py，注意生成的csv文件中可能会出现数值问题，比如存在126.1962166.1这种数据，需要手动把后面的.1去除，改成126.1962166，然后对于新的裂缝图片，替换crack_entropy_fuzzy.py文件里的binary_image = cv2.imread('crack_binary_image.png', cv2.IMREAD_GRAYSCALE)这里的png图片，然后运行crack_entropy_fuzzy.py即可得出分数
-
-## 需要改进的地方
-
-计算更多指标，筛除多余的无用指标
-
-一些系数的确定偏主观，可以再优化
-
-隶属度矩阵等级向量level_vectors需要根据指标具体分析进行修改
-
-主观指标index_basic_metric = calculate_basic_metrics(orign_binary_image,0.25,0.25,0.25,0.25)要改后边的权重，默认用的全是0.25，必然不行，因为这会导致裂缝数量的影响微乎其微
-
-改指标时is_benefit和level_vectors都要修改
-
-代码中一堆数据类型转换，比如astype，极大地增加了误差
-
-基本是torch的tensor和numpy的array格式都在用，建议全改成tensor格式，然后全移到gpu里去存算
+2. 安装依赖
+```bash
+pip install -r requirements.txt
+```
 
 
+
+### 使用说明
+1. 启动程序
+```bash
+python ui-main.py
+```
+
+2. 界面操作流程：
+   - 点击"导入数据集"选择图像文件夹
+   - 选择图片进行单张检测或批量处理
+   - 查看检测结果与健康评分
+   - 点击图片查看大图对比
+
+
+## 示例演示
+
+![单图检测演示](demo.gif) <!-- 替换为你的GIF路径 -->
+
+## 常见问题
+
+Q: 如何提高检测精度？  
+A: 建议：
+1. 使用更高分辨率的图像
+2. 增加训练数据量
+3. 调整模型超参数
+
+Q: 非GPU环境能否运行？  
+A: 可以，但需要修改代码中的`.cuda()`调用
+
+
+---
+
+**研究团队**：山东大学控制科学与工程学院裂缝检测与智能评估课题组
+
+**版本更新**：2025.01.24
